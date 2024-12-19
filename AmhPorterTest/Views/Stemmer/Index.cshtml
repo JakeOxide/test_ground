@@ -17,10 +17,36 @@
     @using (Html.BeginForm("Stem", "Stemmer", FormMethod.Post))
     {
         <div class="form-group">
+
+            <p><em>The Following words are considered Stop Words for Amharic and as such the Stemmer <b>DOES NOT</b> consider them or their variations as valid inputs</em></p>
+            <ul>
+                <li>እንዴት (how)</li>
+                <li>ነ (is)</li>
+                <li>አንድ (one)</li>
+                <li>እኔ (I)</li>
+                <li>አንቺ (you, female)</li>
+                <li>አንተ (you, male)</li>
+                <li>እንደ (like)</li>
+                <li>እንዲህ (this way)</li>
+                <li>እንግዲህ (then)</li>
+                <li>ነገር (but)</li>
+                <li>ለ (for/to)</li>
+                <li>እንደዚህ (like this)</li>
+                <li>ወይም (or)</li>
+                <li>ይህ (this)</li>
+                <li>ይህን (this one)</li>
+                <li>አሁን (now)</li>
+                <li>ወደ (to)</li>
+                <li>እንደ (as)</li>
+                <li>ይኖር (will be)</li>
+                <li>በ (in)</li>
+                <li>ነው (is)</li>
+            </ul>
+
             <label for="Query">Input Word</label>
-            <input name="Query" id="InputWord" class="form-control" required />
+            <input name="Query" id="InputWord" class="form-control" placeholder="Word" required />
             <br />
-            <p>You can use one or more words from this list : የበሮች, የበጎች, ዳኛዎች, ደብተሮች, የመስመር, የስልክ <em>Use (,) to Separate the words</em></p>
+            <p>You can use one or more words from this list : የበሮች, የበጎች, ዳኞች, ደብተሮች, የመስመር, የስልክ, ወረኞች <em>Use Comma (,) to Separate the words</em></p>
             <input class="btn btn-outline-primary text-dark" type="submit" value="Stem" />
         </div>
     }
