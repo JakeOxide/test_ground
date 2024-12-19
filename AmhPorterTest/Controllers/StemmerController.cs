@@ -17,6 +17,18 @@ namespace AmhPorterTest.Controllers
         public IActionResult Index()
         {
             this.model = new CustomWordList(new List<CustomWord>(), new Rules());
+            char[] checkChars = ['ሱ', 'ዉ', 'ኙ', 'ደ'];
+
+            foreach(char c in checkChars)
+                Console.WriteLine($"Char_IN - ${c} - Key Index - ${matrix.FindKey(c).Item1}");
+
+            /*
+                ሱ
+                ዉ
+                ኙ
+                ዱ             
+            */
+
             return View();
         }
 
@@ -31,67 +43,35 @@ namespace AmhPorterTest.Controllers
         }
         public List<CustomWord> ProcessWords()
         {
-            IdentifyRules();
             ExecuteTransformations();
             return inputWords;
-        }
-
-        private void IdentifyRules()
-        {
-            for (int i = 0; i < inputWords.Count; i++)
-            {
-                if (inputWords[i].word[0] == 'የ'
-                    && inputWords[i].word[inputWords[i].word.Length - 1] == 'ች')
-                {
-                    inputWords[i].wordRules.Remove_FirstIndex = true;
-                    inputWords[i].wordRules.Substitute_2LastIndex_6Letter_Remove_LastLetter = true;
-                }
-                else if (inputWords[i].word[0] == 'የ'
-                    && inputWords[i].word[inputWords[i].word.Length - 2] == 'ዎ'
-                    && inputWords[i].word[inputWords[i].word.Length - 1] == 'ች')
-                {
-                    inputWords[i].wordRules.Remove_FirstIndex = true;
-                    inputWords[i].wordRules.Substitute_2LastIndex_2Letter_Remove_LastLetter = true;
-                }
-                else if (inputWords[i].word[0] == 'የ')
-                {
-                    inputWords[i].wordRules.Remove_FirstIndex = true;
-                }
-                else if (inputWords[i].word[inputWords[i].word.Length - 2] == 'ዎ'
-                    && inputWords[i].word[inputWords[i].word.Length - 1] == 'ች')
-                {
-                    inputWords[i].wordRules.Substitute_2LastIndex_2Letter_Remove_LastLetter = true;
-                }
-                else if (inputWords[i].word[inputWords[i].word.Length - 1] == 'ች')
-                {
-                    inputWords[i].wordRules.Substitute_2LastIndex_6Letter_Remove_LastLetter = true;
-                }
-            }
         }
 
         private void ExecuteTransformations()
         {
             for (int i = 0; i < inputWords.Count; i++)
             {
-                if (inputWords[i].wordRules.Remove_FirstIndex && inputWords[i].wordRules.Substitute_2LastIndex_6Letter_Remove_LastLetter)
+                var currentWord = inputWords[i];
+                currentWord.IdentifyRules();
+                if (currentWord.wordRules.Remove_FirstIndex && currentWord.wordRules.Substitute_2LastIndex_6Letter_Remove_LastLetter)
                 {
                     SubstituteCustomWord(inputWords, i, Trigger_Remove_FirstIndex(inputWords.ElementAt(i)));
                     SubstituteCustomWord(inputWords, i, Trigger_Substitute_2LastIndex_6Letter_Remove_LastLetter(inputWords.ElementAt(i)));
                 }
-                else if (inputWords[i].wordRules.Remove_FirstIndex && inputWords[i].wordRules.Substitute_2LastIndex_2Letter_Remove_LastLetter)
+                else if (currentWord.wordRules.Remove_FirstIndex && currentWord.wordRules.Substitute_2LastIndex_4Letter_Remove_LastLetter)
                 {
                     SubstituteCustomWord(inputWords, i, Trigger_Remove_FirstIndex(inputWords.ElementAt(i)));
                     SubstituteCustomWord(inputWords, i, Trigger_Substitute_2LastIndex_2Letter_Remove_LastLetter(inputWords.ElementAt(i)));
                 }
-                else if (inputWords[i].wordRules.Remove_FirstIndex)
+                else if (currentWord.wordRules.Remove_FirstIndex)
                 {
                     SubstituteCustomWord(inputWords, i, Trigger_Remove_FirstIndex(inputWords.ElementAt(i)));
                 }
-                else if (inputWords[i].wordRules.Substitute_2LastIndex_2Letter_Remove_LastLetter)
+                else if (currentWord.wordRules.Substitute_2LastIndex_4Letter_Remove_LastLetter)
                 {
-                    SubstituteCustomWord(inputWords, i, Trigger_Substitute_2LastIndex_2Letter_Remove_LastLetter(inputWords.ElementAt(i)));
+                    SubstituteCustomWord(inputWords, i, Trigger_Substitute_2LastIndex_4Letter_Remove_LastLetter(inputWords.ElementAt(i)));
                 }
-                else if (inputWords[i].wordRules.Substitute_2LastIndex_6Letter_Remove_LastLetter)
+                else if (currentWord.wordRules.Substitute_2LastIndex_6Letter_Remove_LastLetter)
                 {
                     SubstituteCustomWord(inputWords, i, Trigger_Substitute_2LastIndex_6Letter_Remove_LastLetter(inputWords.ElementAt(i)));
                 }
@@ -110,7 +90,7 @@ namespace AmhPorterTest.Controllers
         private CustomWord Trigger_Substitute_2LastIndex_6Letter_Remove_LastLetter(CustomWord word)
         {
             dictionary = matrix.GetDictionary();
-            char key = matrix.FindKey(word.word[word.word.Length - 2]);
+            char key = matrix.FindKey(word.word[word.word.Length - 2]).Item2;
             char newLetter = dictionary.GetValueOrDefault(key).ElementAt(4);
             List<char> tempWord = word.word.ToList();
             tempWord.RemoveRange(tempWord.Count - 2, 2);
@@ -122,11 +102,23 @@ namespace AmhPorterTest.Controllers
         private CustomWord Trigger_Substitute_2LastIndex_2Letter_Remove_LastLetter(CustomWord word)
         {
             dictionary = matrix.GetDictionary();
-            //char key = matrix.FindKey(word.word[word.word.Length - 2]);
-            //char newLetter = dictionary.GetValueOrDefault(key).ElementAt(4);
+            char key = matrix.FindKey(word.word[word.word.Length - 2]).Item2;
+            char newLetter = dictionary.GetValueOrDefault(key).ElementAt(2);
             List<char> tempWord = word.word.ToList();
             tempWord.RemoveRange(tempWord.Count - 2, 2);
-            //tempWord.Add(newLetter);
+            tempWord.Add(newLetter);
+            CustomWord newWord = new CustomWord(new string(tempWord.ToArray()), word.wordRules);
+            return newWord;
+        }
+
+        private CustomWord Trigger_Substitute_2LastIndex_4Letter_Remove_LastLetter(CustomWord word)
+        {
+            dictionary = matrix.GetDictionary();
+            char key = matrix.FindKey(word.word[word.word.Length - 2]).Item2;
+            char newLetter = dictionary.GetValueOrDefault(key).ElementAt(2);
+            List<char> tempWord = word.word.ToList();
+            tempWord.RemoveRange(tempWord.Count - 2, 2);
+            tempWord.Add(newLetter);
             CustomWord newWord = new CustomWord(new string(tempWord.ToArray()), word.wordRules);
             return newWord;
         }

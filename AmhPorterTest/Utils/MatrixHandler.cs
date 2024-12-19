@@ -86,14 +86,14 @@ namespace AmhPorterTest
 
         }
 
-        public char FindKey(char letter)
+        public (int, char) FindKey(char letter)
         {
             for(int i = 0; i < this.privateDictionary.Count; i++)
             {
                 if (this.privateDictionary.ElementAt(i).Value.Contains(letter)) 
-                    return this.privateDictionary.Keys.ElementAt(i);
+                    return (i, this.privateDictionary.Keys.ElementAt(i));
             }
-            return '0';
+            return (0, '0');
         }
 
 

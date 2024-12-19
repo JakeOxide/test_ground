@@ -4,6 +4,9 @@ namespace AmhPorterTest
     {
         public static void Main(string[] args)
         {
+            Console.InputEncoding = System.Text.Encoding.Unicode;
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
