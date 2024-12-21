@@ -1,5 +1,5 @@
 ﻿
-@model CustomWordList
+@model ResultCollection
 
 
 @{
@@ -9,12 +9,12 @@
 <div class="container mt-5">
     <h1>Stemmed Words</h1>
         
-    @if (Model.customWords != null && Model.customWords.Any())
+    @if (Model.customWords != null && Model.customWords.customWords.Any())
     {
         <ul class="list-group">
-            @foreach (var item in Model.customWords)
+            @for(int i = 0; i < Model.customWords.customWords.Count; i++)
             {
-                <li class="list-group-item">@item.word</li>
+                <li class="list-group-item"><h3>@Model.inputWords[i].word -&gt; @Model.customWords.customWords[i].word</h3></li>
             }
         </ul>
     }

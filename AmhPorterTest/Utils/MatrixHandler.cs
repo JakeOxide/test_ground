@@ -88,6 +88,8 @@ namespace AmhPorterTest
 
         public (int, char) FindKey(char letter)
         {
+            if (this.privateDictionary.ContainsKey(letter)) return (this.privateDictionary.Keys.ToList().IndexOf(letter), letter);
+
             for(int i = 0; i < this.privateDictionary.Count; i++)
             {
                 if (this.privateDictionary.ElementAt(i).Value.Contains(letter)) 
@@ -97,10 +99,30 @@ namespace AmhPorterTest
         }
 
 
+        public List<char> GetVariation(char letter, int ident)
+        {
+            char key = FindKey(letter).Item2;
+            return this.privateDictionary.GetValueOrDefault(key);
+        }
+
+        public char GetSpecificVariation(char letter, int ident)
+        {
+            char key = FindKey(letter).Item2;
+            return this.privateDictionary.GetValueOrDefault(key).ElementAt(ident);
+        }
+
+        public bool CheckFamily(char letter, char letter2)
+        {
+            char key = FindKey(letter).Item2;
+            return this.privateDictionary.GetValueOrDefault(key).Contains(letter2);
+
+        }
+
+
         public List<CustomWord> GetCleanInput(string str)
         {
             List<CustomWord> words = new List<CustomWord>();
-            List<string>? input = str.Split(',').ToList();
+            List<string>? input = str.Split(' ').ToList();
             if (input == null)
                 throw new Exception("Null Input Detected");
 

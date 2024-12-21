@@ -4,6 +4,7 @@
     {
         public string? word { get; set; }
         public Rules? wordRules { get; set; }
+        public bool? changeCheck { get; set; }
 
         char[] checkChars = ['ሰ', 'ወ', 'ኘ', 'ደ'];
         int[] checkCharKeys = [6, 19, 15, 24];
@@ -27,6 +28,7 @@
             if (this.word == null) return;
             if (this.wordRules != null) this.wordRules = new Rules();
 
+            HandlePrefixes();
 
             // Rule 101: P('የ')*{7Var}S('ች') -> Rem(P('የ'), S('ች')) and Rep(w.len-1, {6Var})
             if (this.word[0] == 'የ'
@@ -45,11 +47,7 @@
                 this.wordRules.Substitute_2LastIndex_6Letter_Remove_LastLetter = true;
             }
 
-            // Rule 103: P('የ')* -> Rem(P())
-            else if (this.word[0] == 'የ')
-            {
-                this.wordRules.Remove_FirstIndex = true;
-            }
+
 
             // Rule 104: * (ሰ) || (ወ) || (ኘ) || (ደ) *S('ዎ')S('ች') -> Rem(S('ዎ', 'ች')) and Rep(w.len-1, {4Var})
 
@@ -69,6 +67,7 @@
 
 
             // Rule 106: *S() -> Rem(S(, 'ች'))
+
             else if (this.word[this.word.Length - 2] == 'ዎ'
                 && this.word[this.word.Length - 1] == 'ች')
             {
@@ -82,6 +81,31 @@
             }
             
         }
+
+        private void HandlePrefixes()
+        {
+
+			// Rule 101: P('በየ')* -> Rem(P('በየ')) - Not for words with Prefix + a single letter
+			if (this.word[0] == 'በ' && this.word[1] == 'የ')
+			{
+				if (this.word.Length == 2) return;
+				this.wordRules.Remove_FirstTwoIndex = true;
+			}
+
+			// Rule 102: P('በ')* -> Rem(P('በ')) - Not for words with Prefix + a single letter
+			if (this.word[0] == 'በ')
+			{
+				if (this.word.Length == 2) return;
+				this.wordRules.Remove_FirstIndex = true;
+			}
+
+			// Rule 103: P('የ')* -> Rem(P('የ')) - Not for words with Prefix + a single letter
+			if (this.word[0] == 'የ')
+			{
+				if (this.word.Length == 2) return;
+				this.wordRules.Remove_FirstIndex = true;
+			}
+		}
 
         private bool CustomWordContains(string str)
         {

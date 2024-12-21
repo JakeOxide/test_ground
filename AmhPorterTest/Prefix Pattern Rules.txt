@@ -1,0 +1,22 @@
+	// Rule 101: P('በየ')* {X[2var]} -> Rem(P('በ', 'የ'))* Sub({X[6var]}) - Not for words with Prefix + a two letters
+
+
+	// Rule 102: P('በ')* -> Rem(P('በ')) - Not for words with Prefix + a single letter
+
+
+	// Rule 103: P('እንደየ')* -> Rem(P('እ', 'ን', 'ደ', 'የ'))
+
+
+	// Rule 104: P('እንደ')* -> Rem(P('እ', 'ን', 'ደ'))
+
+
+	// Rule 105: P('እነ')* -> Rem(P('እ', 'ነ')) - Not for words with Prefix + a single letter
+
+
+	// Rule 106: P('እየ')* -> Rem(P('እ', 'የ'))
+
+
+	// Rule 107: P('እያ')* -> Rem(P('እ', 'ያ'))
+
+
+	// Rule 108: P('የ')* -> Rem(P('የ')) - Not for words with Prefix + a single letter
